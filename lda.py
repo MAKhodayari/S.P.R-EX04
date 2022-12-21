@@ -4,19 +4,23 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
-    # Preparing Data
-    data, x, y = utl.load_dataset()
+    data, labels = utl.load_dataset()
     
-    eigenvectors = utl.LDA(data, y)
+    eigenvectors = utl.lda(data, labels)
     
-    n_components = [1, 40, 60]
+    components = [1, 40, 60]
 
     image = []
-    for i in n_components:
-        w = eigenvectors[0:i]
+    test_fig = plt.figure()
+    test_fig.suptitle('Reconstructed From LDA')
+    for i, component in enumerate(components):
+        w = eigenvectors[:component]
         lda = np.dot(data, w.T)
         X_reconstructed = np.dot(lda, w) + (np.mean(data, axis=0))
         im = X_reconstructed[0].reshape(64, 64)
-        plt.imshow(im,cmap='gray')
-        plt.title('Reconstructed with K = ' + str(i), fontsize=16)
-        plt.show()
+        test_ax = test_fig.add_subplot(1, 3, i + 1)
+        test_ax.imshow(im)
+        test_ax.set_title('K = ' + str(component))
+    test_fig.tight_layout()
+
+    utl.plot_mse(data, eigenvectors)

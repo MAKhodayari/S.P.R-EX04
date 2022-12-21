@@ -17,6 +17,6 @@ if __name__ == '__main__':
         lda = np.dot(data, w.T)
         X_reconstructed = np.dot(lda, w) + (np.mean(data, axis=0))
         im = X_reconstructed[0].reshape(64, 64)
-        plt.imshow(im,)
+        plt.imshow(im,cmap='gray')
         plt.title('Reconstructed with K = ' + str(i), fontsize=16)
         plt.show()

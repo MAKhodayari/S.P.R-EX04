@@ -37,7 +37,7 @@ if __name__ == '__main__':
         vector = vectors[:component]
         reconstruct = np.dot(data, np.dot(vector.T, vector)) + feat_mean
         recon_ax = recon_fig.add_subplot(2, 2, i + 1)
-        recon_ax.imshow(reconstruct[20].reshape(64, 64))
+        recon_ax.imshow(reconstruct[20].reshape(64, 64),cmap='gray')
         recon_ax.set_title(f'K = {component}')
     recon_fig.tight_layout()
 

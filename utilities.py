@@ -1,7 +1,14 @@
 import numpy as np
+import pandas as pd
 from sklearn import datasets
 import matplotlib.pyplot as plt
-
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2, RFE
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn import metrics
 
 def load_dataset():
     olivetti = datasets.fetch_olivetti_faces()
@@ -71,3 +78,50 @@ def project(data, vector):
     projection = np.dot(data, vector.T)
     return projection
 
+def load_data(path):
+    data = pd.read_csv(path,sep=" ",header=None)
+    X = data.iloc[:, :-1]
+    y = data.iloc[:, -1]
+    return X,y
+
+def logisticRegression(x,y):
+    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.20)
+    logreg=LogisticRegression(solver='liblinear') 
+    logreg.fit(X_train,y_train)
+    y_pred=logreg.predict(X_test)
+    acc=metrics.accuracy_score(y_test, y_pred)
+    return acc
+
+def chi(x,y,K):
+    chi2_features = SelectKBest(chi2,k=K)
+    X_kbest_features = chi2_features.fit_transform(x, y)
+    return X_kbest_features
+
+def Rfe(x,y,k):
+    rfe = RFE(estimator=DecisionTreeClassifier(), n_features_to_select=k)
+    X_kbest_features=rfe.fit_transform(x, y)
+    return X_kbest_features
+
+def Univariate(x,y,K):
+    sel_f = SelectKBest(f_classif, k=K)
+    X_kbest_features= sel_f.fit_transform(x,y)
+    return X_kbest_features
+
+def Result(x,y,name):
+    k=[5,10]
+    df=pd.DataFrame(columns=['k','chi2','RFE','Univariate'])
+    for i in k:
+        X_kbest_features_chi=chi(x,y,i)
+        chi_acc=logisticRegression(X_kbest_features_chi,y)
+        X_kbest_features_rfe=Rfe(x,y,i)
+        rfe_acc=logisticRegression(X_kbest_features_rfe,y)
+        X_kbest_features_Univariate=Univariate(x,y,i)
+        Univariate_acc=logisticRegression(X_kbest_features_Univariate,y)
+        #dict= {'K': i, 'chi2':chi_acc , 'RFE':rfe_acc,'Univariate':Univariate_acc }
+        df2 = pd.DataFrame([[i,chi_acc,rfe_acc,Univariate_acc ]],columns=['k','chi2','RFE','Univariate']) 
+        df= pd.concat([df, df2])
+    print("dataset:",name)    
+    print("original datasets acc:")
+    original_acc=logisticRegression(x,y)
+    print(original_acc)
+    return df          

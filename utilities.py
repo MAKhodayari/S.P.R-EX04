@@ -230,9 +230,9 @@ def variance_analysis(eigen_values):
         gained_var += explained_variance[i]
         plt.scatter(i, gained_var, color='green')
         if i == 1:
-            print(f'Variance Reached First PC: {gained_var}')
+            print(f'Variance Reached With First PC: {gained_var}')
         elif i == 5:
-            print(f'Variance Reached First 5 PCs: {gained_var}')
+            print(f'Variance Reached With First 5 PCs: {gained_var}')
         if gained_var >= 0.75 and not f75:
             print(f'Reached 75% Of Variance With {i + 1} PCs')
             f75 = True
@@ -242,6 +242,6 @@ def variance_analysis(eigen_values):
         elif gained_var >= 0.95 and not f95:
             print(f'Reached 95% Of Variance With {i + 1} PCs')
             f95 = True
-    print(f'In Order To Have Good Reconstruction It\'s Said To Have So Many PCs'
+    print(f'In Order To Have Good Reconstruction It\'s Said To Have So Many PCs '
           f'That Reach 90% Of Variance Which Is {best_pc} PCs In This Case')
     plt.show()
